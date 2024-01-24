@@ -1,12 +1,18 @@
 package com.adminKoo.reactboard.domain.member.entity;
 
+import com.adminKoo.reactboard.domain.board.entity.Board;
+import com.adminKoo.reactboard.domain.comment.entity.Comment;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity @Getter
 @NoArgsConstructor
-@Table(name = "member")
+@Table(name = "tb_member")
 public class Member {
 
     @Id
@@ -25,5 +31,19 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Role roles;
+
+    /* 회원 삭제하면 게시글같이 삭제 */
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Board> boardList = new ArrayList<>();
+     /* 회원 삭제하면 댓글같이 삭제 */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    public void setBoard(Board board) {
+        boardList.add(board);
+    }
+    public void setComment(Comment comment) {
+        commentList.add(comment);
+    }
 
 }
